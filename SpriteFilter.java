@@ -30,14 +30,15 @@ import javax.swing.border.Border;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class SpriteFilter {
+	// version number
 	static final String VERSION = "v1.3";
 	
 	// to spit out errors
 	public SpriteFilter() {}
 	static final SpriteFilter controller = new SpriteFilter();
 
-	static final int SPRITESIZE = 896 * 32; // invariable lengths
-	static final int PALETTESIZE = 0x78; // not simplified to understand the numbers
+	static final int SPRITESIZE		= 896 * 32;	// invariable lengths
+	static final int PALETTESIZE	= 0x78;		// not simplified to understand the numbers
 
 	static final String HEX = "0123456789ABCDEF"; // HEX values
 
@@ -50,6 +51,7 @@ public class SpriteFilter {
 			{4,2},{4,3},{5,2},{5,3},{6,2},{6,3},{7,2},{7,3}
 	};
 
+	// descriptions of filters
 	static final String[][] FILTERS = {
 			{ "Static",
 				"Randomizes pixels of specific indices.",
@@ -108,12 +110,14 @@ public class SpriteFilter {
 			} //end System
 		} // end LAF
 
-		final JFrame frame = new JFrame("Sprite Filter " + VERSION);
-		final Dimension d = new Dimension(600,382);
-		final Dimension d2 = new Dimension(600,600);
-		final JFrame aboutFrame = new JFrame("About");
-		final JMenuItem aboutMenu = new JMenuItem("About");
-		final TextArea aboutTextArea = new TextArea("",0,0,TextArea.SCROLLBARS_VERTICAL_ONLY);
+		final JFrame	frame	= new JFrame("Sprite Filter " + VERSION);	// frame name
+		final Dimension d		= new Dimension(600,382);
+		final Dimension d2		= new Dimension(600,600);
+
+		// about frame
+		final JFrame	aboutFrame		= new JFrame("About");
+		final JMenuItem	aboutMenu		= new JMenuItem("About");
+		final TextArea	aboutTextArea	= new TextArea("",0,0,TextArea.SCROLLBARS_VERTICAL_ONLY);
 		aboutTextArea.setEditable(false);
 		aboutTextArea.append("Written by fatmanspanda"); // hey, that's me
 		aboutTextArea.append("\n\nSpecial thanks:\nMikeTrethewey"); // force me to do this and falls in every category
@@ -132,30 +136,27 @@ public class SpriteFilter {
 				"http://github.com/fatmanspanda/ALttPNG/wiki"
 				}, ", "));
 		aboutFrame.add(aboutTextArea);
+		aboutMenu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				aboutFrame.setVisible(true);
+			}});
+		aboutFrame.setSize(d2);
 
 		// menu 
 		final JMenuBar menu = new JMenuBar();
 		menu.add(aboutMenu);
 		frame.setJMenuBar(menu);
 
-		aboutFrame.setSize(d2);
-
-		// about
-		aboutMenu.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				aboutFrame.setVisible(true);
-			}});
-
-		Border bothPad = BorderFactory.createEmptyBorder(0,6,0,6);
-		Border allPad = BorderFactory.createEmptyBorder(3,3,3,3);
-		Border bottomPad = BorderFactory.createEmptyBorder(0,0,3,0);
-		Border smAllPad = BorderFactory.createEmptyBorder(1,1,1,1);
+		Border bothPad		= BorderFactory.createEmptyBorder(0,6,0,6);
+		Border allPad		= BorderFactory.createEmptyBorder(3,3,3,3);
+		Border bottomPad	= BorderFactory.createEmptyBorder(0,0,3,0);
+		Border smAllPad		= BorderFactory.createEmptyBorder(1,1,1,1);
 		
-		final JTextField fileName = new JTextField("");
-		final JTextField flags = new JTextField();
-		final JButton fileNameBtn = new JButton("Load SPR");
-		final JButton goBtn = new JButton("Apply Filter!");
-		final JLabel optlbl = new JLabel("Flag and filter");
+		final JTextField	fileName	= new JTextField("");				// filename text field
+		final JTextField	flags		= new JTextField();					// flags text field
+		final JButton		fileNameBtn	= new JButton("Load SPR");
+		final JButton		goBtn		= new JButton("Apply Filter!");
+		final JLabel		optlbl		= new JLabel("Flag and filter");
 		optlbl.setBorder(bothPad);
 
 		String[] filterNames = new String[FILTERS.length];
@@ -165,12 +166,12 @@ public class SpriteFilter {
 		FileNameExtensionFilter sprFilter =
 				new FileNameExtensionFilter("ALttP Sprite files", new String[] { "spr" });
 		final JComboBox<String> options = new JComboBox<String>(filterNames);
-		final JPanel frame2 = new JPanel(new BorderLayout());
-		final JPanel imgWrap = new JPanel(new BorderLayout());
-		final JPanel filtWrap = new JPanel(new BorderLayout());
-		final JPanel goWrap = new JPanel(new BorderLayout());
-		final JPanel goBtnWrap = new JPanel(new BorderLayout());
-		final JPanel bothWrap = new JPanel(new BorderLayout());
+		final JPanel frame2		= new JPanel(new BorderLayout());
+		final JPanel imgWrap	= new JPanel(new BorderLayout());
+		final JPanel filtWrap	= new JPanel(new BorderLayout());
+		final JPanel goWrap		= new JPanel(new BorderLayout());
+		final JPanel goBtnWrap	= new JPanel(new BorderLayout());
+		final JPanel bothWrap	= new JPanel(new BorderLayout());
 
 		frame2.setBorder(allPad);
 		goWrap.setBorder(smAllPad);
@@ -208,9 +209,9 @@ public class SpriteFilter {
 		final File EEE = new File("");
 		options.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				int option = options.getSelectedIndex();
-				String filterText = FILTERS[option][1];
-				String flagText = FILTERS[option][2];
+				int		option		= options.getSelectedIndex();
+				String	filterText	= FILTERS[option][1];
+				String	flagText	= FILTERS[option][2];
 				if (flagText == null) {
 					flagText = "No flag options available for this filter.";
 				}
@@ -232,8 +233,9 @@ public class SpriteFilter {
 				} catch (NullPointerException e) {
 					// do nothing
 				} finally {
-					if (testFileType(n,"spr"))
+					if (testFileType(n,"spr")) {
 						fileName.setText(n);
+					}
 				}
 				explorer.removeChoosableFileFilter(sprFilter);
 			}});
@@ -286,8 +288,8 @@ public class SpriteFilter {
 	 * @throws IOException
 	 */
 	public static byte[] readSprite(String path) throws IOException {
-		File file = new File(path);
-		byte[] ret = new byte[(int) file.length()];
+		File	file	= new File(path);
+		byte[]	ret		= new byte[(int) file.length()];
 		FileInputStream s;
 		try {
 			s = new FileInputStream(file);
@@ -347,8 +349,8 @@ public class SpriteFilter {
 	 * Read palette from last set of data
 	 */
 	public static byte[] getPalette(byte[] sprite) {
-		byte[] pal = new byte[PALETTESIZE];
-		int offset = SPRITESIZE;
+		byte[]	pal		= new byte[PALETTESIZE];
+		int		offset	= SPRITESIZE;
 		for (int i = 0; i < PALETTESIZE; i++) {
 			pal[i] = sprite[offset+i];
 		}
