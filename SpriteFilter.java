@@ -2,6 +2,7 @@ package SpriteFilter;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -17,6 +18,8 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -27,6 +30,8 @@ import javax.swing.border.Border;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class SpriteFilter {
+	static final String VERSION = "v1.3";
+	
 	// to spit out errors
 	public SpriteFilter() {}
 	static final SpriteFilter controller = new SpriteFilter();
@@ -103,15 +108,52 @@ public class SpriteFilter {
 			} //end System
 		} // end LAF
 
-		final JFrame frame = new JFrame("Sprite Filter");
+		final JFrame frame = new JFrame("Sprite Filter " + VERSION);
 		final Dimension d = new Dimension(600,382);
+		final Dimension d2 = new Dimension(600,600);
+		final JFrame aboutFrame = new JFrame("About");
+		final JMenuItem aboutMenu = new JMenuItem("About");
+		final TextArea aboutTextArea = new TextArea("",0,0,TextArea.SCROLLBARS_VERTICAL_ONLY);
+		aboutTextArea.setEditable(false);
+		aboutTextArea.append("Written by fatmanspanda"); // hey, that's me
+		aboutTextArea.append("\n\nSpecial thanks:\nMikeTrethewey"); // force me to do this and falls in every category
+		aboutTextArea.append("\n\nResources and development:\n");
+		aboutTextArea.append(join(new String[]{
+				"Veetorp", // provided most valuable documentation
+				"Zarby89", // various documentation and answers
+				"Sosuke3" // various snes code answers
+				}, ", "));
+		aboutTextArea.append("\n\nIcon by:\n");
+		aboutTextArea.append(join(new String[]{
+				"Hoodyha"
+				}, ", "));
+		aboutTextArea.append("\n\nUpdates at:\n");
+		aboutTextArea.append(join(new String[]{
+				"http://github.com/fatmanspanda/ALttPNG/wiki"
+				}, ", "));
+		aboutFrame.add(aboutTextArea);
+
+		// menu 
+		final JMenuBar menu = new JMenuBar();
+		menu.add(aboutMenu);
+		frame.setJMenuBar(menu);
+
+		aboutFrame.setSize(d2);
+
+		// about
+		aboutMenu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				aboutFrame.setVisible(true);
+			}});
+
 		Border bothPad = BorderFactory.createEmptyBorder(0,6,0,6);
 		Border allPad = BorderFactory.createEmptyBorder(3,3,3,3);
 		Border bottomPad = BorderFactory.createEmptyBorder(0,0,3,0);
 		Border smAllPad = BorderFactory.createEmptyBorder(1,1,1,1);
+		
 		final JTextField fileName = new JTextField("");
 		final JTextField flags = new JTextField();
-		final JButton fileNameBtn = new JButton("Load SPR file");
+		final JButton fileNameBtn = new JButton("Load SPR");
 		final JButton goBtn = new JButton("Apply Filter!");
 		final JLabel optlbl = new JLabel("Flag and filter");
 		optlbl.setBorder(bothPad);
@@ -699,6 +741,23 @@ public class SpriteFilter {
 		return ret;
 	}
 
+	/**
+	 * Join array of strings together with a delimiter.
+	 * @param s - array of strings
+	 * @param c - delimiter
+	 * @return A single <tt>String</tt>.
+	 */
+	public static String join(String[] s, String c) {
+		String ret = "";
+		for (int i = 0; i < s.length; i++) {
+			ret += s[i];
+			if (i != s.length-1) {
+				ret += c;
+			}
+		}
+		return ret;
+	}
+	
 	/**
 	 * Test a file against a single extension.
 	 * 
