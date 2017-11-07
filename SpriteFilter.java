@@ -264,6 +264,9 @@ public class SpriteFilter {
 
 		// file explorer
 		final JFileChooser explorer = new JFileChooser();
+
+		explorer.setCurrentDirectory(new File(".")); // quick way to set to current .jar loc
+
 		// can't clear text due to wonky code
 		// have to set a blank file instead
 		final File EEE = new File("");
