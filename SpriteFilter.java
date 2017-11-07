@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.swing.ImageIcon;
@@ -295,7 +294,7 @@ public class SpriteFilter {
 				} catch (NullPointerException e) {
 					// do nothing
 				} finally {
-					if (testFileType(n,"spr")) {
+					if (SpriteManipulator.testFileType(n,"spr")) {
 						fileName.setText(n);
 					}
 				}
@@ -319,13 +318,13 @@ public class SpriteFilter {
 				int filterToken = options.getSelectedIndex();
 				byte[][][] eightXeight = SpriteManipulator.makeSpr8x8(curSprite);
 				eightXeight = filter(eightXeight,filterToken, flags.getText());
-				byte[] palette = getPalette(curSprite);
+				byte[] palette = SpriteManipulator.getPaletteFromSPR(curSprite);
 
 				byte[] fullMap = SpriteManipulator.exportToSPR(eightXeight,palette);
 				String exportedName = fileN.substring(0,fileN.lastIndexOf('.')) +
 						" (" + FILTERS[filterToken][0].toLowerCase() + ").spr";
 				try {
-					writeSPR(fullMap,exportedName);
+					SpriteManipulator.writeSPR(fullMap,exportedName);
 				} catch (IOException e) {
 					JOptionPane.showMessageDialog(frame,
 							"Error writing sprite",
@@ -343,18 +342,6 @@ public class SpriteFilter {
 		options.getActionListeners()[0].actionPerformed(
 				new ActionEvent(options, ActionEvent.ACTION_PERFORMED,"",0,0));
 		frame.setVisible(true);
-	}
-
-	/**
-	 * Read palette from last set of data
-	 */
-	public static byte[] getPalette(byte[] sprite) {
-		byte[]	pal = new byte[PALETTESIZE];
-		int offset = SPRITESIZE;
-		for (int i = 0; i < PALETTESIZE; i++) {
-			pal[i] = sprite[offset+i];
-		}
-		return pal;
 	}
 
 	/*
@@ -635,62 +622,15 @@ public class SpriteFilter {
 	 * 
 	 * 
 	 */
-
-	/**
-	 * Writes the image to an <tt>.spr</tt> file.
-	 * @param map - SNES 4BPP file, including 5:5:5
-	 * @param loc - File path of exported sprite
-	 */
-	public static void writeSPR(byte[] map, String loc) throws IOException {
-		// create a file at directory
-		new File(loc);
-
-		FileOutputStream fileOuputStream = new FileOutputStream(loc);
-		try {
-			fileOuputStream.write(map);
-		} finally {
-			fileOuputStream.close();
-		}
-	}
 	/*
 	 * GUI related functions
 	 */
-	/**
-	 * gives file extension name from a string
-	 * @param s - test case
-	 * @return extension type
-	 */
-	public static String getFileType(String s) {
-		String ret = s.substring(s.lastIndexOf(".") + 1);
-		return ret;
-	}
-
-	/**
-	 * Test a file against multiple extensions.
-	 * The way <b>getFileType</b> works should allow
-	 * both full paths and lone file types to work.
-	 * 
-	 * @param s - file name or extension
-	 * @param type - list of all extensions to test against
-	 * @return <tt>true</tt> if any extension is matched
-	 */
-	public static boolean testFileType(String s, String[] type) {
-		boolean ret = false;
-		String filesType = getFileType(s);
-		for (String t : type) {
-			if (filesType.equalsIgnoreCase(t)) {
-				ret = true;
-				break;
-			}
-		}
-		return ret;
-	}
 
 	/**
 	 * Join array of strings together with a delimiter.
 	 * @param s - array of strings
 	 * @param c - delimiter
-	 * @return A single <tt>String</tt>.
+	 * @return A single {@code String}.
 	 */
 	public static String join(String[] s, String c) {
 		String ret = "";
@@ -701,16 +641,5 @@ public class SpriteFilter {
 			}
 		}
 		return ret;
-	}
-
-	/**
-	 * Test a file against a single extension.
-	 * 
-	 * @param s - file name or extension
-	 * @param type - extension
-	 * @return <tt>true</tt> if extension is matched
-	 */
-	public static boolean testFileType(String s, String type) {
-		return testFileType(s, new String[] { type });
 	}
 }
