@@ -6,8 +6,6 @@ import java.awt.Font;
 import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -29,17 +27,15 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import SpriteManipulator.SpriteManipulator;
+
 public class SpriteFilter {
 	// version number
 	static final String VERSION = "v1.3";
 
-	// to spit out errors
-	public SpriteFilter() {}
-	static final SpriteFilter controller = new SpriteFilter();
-
-	static final int SPRITESIZE = 896 * 32; // invariable lengths
-	static final int PALETTESIZE = 0x78; // not simplified to understand the numbers
-
+	// class constants
+	static final int SPRITESIZE = SpriteManipulator.SPRITE_SIZE; // invariable lengths
+	static final int PALETTESIZE = SpriteManipulator.PAL_DATA_SIZE;
 	static final String HEX = "0123456789ABCDEF"; // HEX values
 
 	// format of snes 4bpp {row (r), bit plane (b)}
@@ -84,7 +80,17 @@ public class SpriteFilter {
 				null },
 			};
 
-	public static void main(String[] args) throws IOException {
+	// main
+	public static void main(String[] args) {
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				doTheGUI();
+			}
+		});
+	}
+
+	// GUI
+	public static void doTheGUI() {
 		// have to have this up here or LAF overrides everything
 		// stupid LAF
 		final JTextPane flagTextInfo = new JTextPane();
@@ -301,7 +307,7 @@ public class SpriteFilter {
 				String fileN = fileName.getText();
 				byte[] curSprite = null;
 				try {
-					curSprite = readSprite(fileN);
+					curSprite = SpriteManipulator.readFile(fileN);
 				} catch (IOException e) {
 					JOptionPane.showMessageDialog(frame,
 							"Error reading sprite",
@@ -311,11 +317,11 @@ public class SpriteFilter {
 				}
 
 				int filterToken = options.getSelectedIndex();
-				byte[][][] eightXeight = sprTo8x8(curSprite);
+				byte[][][] eightXeight = SpriteManipulator.makeSpr8x8(curSprite);
 				eightXeight = filter(eightXeight,filterToken, flags.getText());
 				byte[] palette = getPalette(curSprite);
 
-				byte[] fullMap = exportPNG(eightXeight,palette);
+				byte[] fullMap = SpriteManipulator.exportToSPR(eightXeight,palette);
 				String exportedName = fileN.substring(0,fileN.lastIndexOf('.')) +
 						" (" + FILTERS[filterToken][0].toLowerCase() + ").spr";
 				try {
@@ -337,69 +343,6 @@ public class SpriteFilter {
 		options.getActionListeners()[0].actionPerformed(
 				new ActionEvent(options, ActionEvent.ACTION_PERFORMED,"",0,0));
 		frame.setVisible(true);
-	}
-
-	/**
-	 * Reads a sprite file
-	 * @throws IOException
-	 */
-	public static byte[] readSprite(String path) throws IOException {
-		File file = new File(path);
-		byte[]	ret = new byte[(int) file.length()];
-		FileInputStream s;
-		try {
-			s = new FileInputStream(file);
-		} catch (FileNotFoundException e) {
-			throw e;
-		}
-		try {
-			s.read(ret);
-			s.close();
-		} catch (IOException e) {
-			throw e;
-		}
-
-		return ret;
-	}
-
-	/**
-	 * Takes a sprite and turns it into 896 blocks of 8x8 pixels
-	 * @param sprite
-	 */
-	public static byte[][][] sprTo8x8(byte[] sprite) {
-		byte[][][] ret = new byte[896][8][8];
-
-		// current block we're working on, each sized 32
-		// start at -1 since we're incrementing at 0mod32
-		int b = -1;
-		// locate where in interlacing map we're reading from
-		int g;
-		for (int i = 0; i < SPRITESIZE; i++) {
-			// find interlacing index
-			g = i%32;
-			// increment at 0th index
-			if (g == 0) {
-				b++;
-			}
-			// row to look at
-			int r = BPPI[g][0];
-			// bit plane of byte
-			int p = BPPI[g][1];
-
-			// byte to unravel
-			byte q = sprite[i];
-
-			// run through the byte
-			for (int c = 0; c < 8; c++) {
-				// AND with 1 shifted to the correct plane
-				boolean bitOn = (q & (1 << (7-c))) != 0;
-				// if true, OR with that plane in index map
-				if (bitOn) {
-					ret[b][r][c] |= (1 << (p));
-				}
-			}
-		}
-		return ret;
 	}
 
 	/**
@@ -692,63 +635,6 @@ public class SpriteFilter {
 	 * 
 	 * 
 	 */
-
-	/**
-	 * Converts an index map into a proper 4BPP (SNES) byte map.
-	 * @param eightbyeight - color index map
-	 * @param pal - palette
-	 * @param rando - palette indices to randomize
-	 * @return new byte array in SNES4BPP format
-	 */
-	public static byte[] exportPNG(byte[][][] eightbyeight, byte[] palData) {
-		// bit map
-		boolean[][][] fourbpp = new boolean[896][32][8];
-
-		for (int i = 0; i < fourbpp.length; i++) {
-			// each byte, as per bppi
-			for (int j = 0; j < fourbpp[0].length; j++) {
-				for (int k = 0; k < 8; k++) {
-					// get row r's bth bit plane, based on index j of bppi
-					int row = BPPI[j][0];
-					int plane = BPPI[j][1];
-					int byteX = eightbyeight[i][row][k];
-					// AND the bits with 1000, 0100, 0010, 0001 to get bit in that location
-					boolean bitB = ( byteX & (1 << plane) ) > 0;
-					fourbpp[i][j][k] = bitB;
-				}
-			}
-		}
-
-		// byte map
-		// includes the size of the sheet (896*32) + palette data (0x78)
-		byte[] bytemap = new byte[SPRITESIZE+PALETTESIZE];
-
-		int k = 0;
-		for (int i = 0; i < fourbpp.length; i++) {
-			for (int j = 0; j < fourbpp[0].length; j++) {
-				byte next = 0;
-				// turn true false into byte
-				for (boolean a : fourbpp[i][j]) {
-					next <<= 1;
-					next |= (a ? 1 : 0);
-				}
-				bytemap[k] = next;
-				k++;
-			}
-		}
-		// end 4BPP
-
-		// add palette data, starting at end of sheet
-		int i = SPRITESIZE;
-		for (byte b : palData) {
-			if (i == bytemap.length) {
-				break;
-			}
-			bytemap[i] = b;
-			i++;
-		}
-		return bytemap;
-	}
 
 	/**
 	 * Writes the image to an <tt>.spr</tt> file.
