@@ -268,9 +268,8 @@ public class SpriteFilter {
 
 		// file explorer
 		final JFileChooser explorer = new JFileChooser();
-		FileNameExtensionFilter sprFilter =
-				new FileNameExtensionFilter("ALttP Sprite files", new String[] { "spr" });
-		explorer.setFileFilter(sprFilter);
+		explorer.setAcceptAllFileFilterUsed(false);
+		explorer.setFileFilter(new FileNameExtensionFilter("ALttP Sprite files", new String[] { "spr" }));
 		explorer.setCurrentDirectory(new File(".")); // quick way to set to current .jar loc
 
 		// can't clear text due to wonky code
