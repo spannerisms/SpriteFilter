@@ -1,7 +1,8 @@
 package SpriteFilter;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -10,22 +11,22 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.SpringLayout;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.border.Border;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class SpriteFilter {
@@ -87,6 +88,7 @@ public class SpriteFilter {
 		// have to have this up here or LAF overrides everything
 		// stupid LAF
 		final JTextPane flagTextInfo = new JTextPane();
+		flagTextInfo.setFont(new Font(flagTextInfo.getFont().getFontName(), Font.PLAIN, 10));
 		flagTextInfo.setEditable(false);
 		flagTextInfo.setHighlighter(null);
 		flagTextInfo.setBackground(null);
@@ -110,12 +112,11 @@ public class SpriteFilter {
 		} // end LAF
 
 		final JFrame frame = new JFrame("Sprite Filter " + VERSION); // frame name
-		final Dimension d = new Dimension(600,382);
-		final Dimension d2 = new Dimension(600,600);
+		final Dimension d = new Dimension(600, 382);
+		final Dimension d2 = new Dimension(300, 250);
 
 		// about frame
-		final JFrame aboutFrame = new JFrame("About");
-		final JMenuItem aboutMenu = new JMenuItem("About");
+		final JDialog aboutFrame = new JDialog(frame, "About");
 		final TextArea aboutTextArea = new TextArea("",0,0,TextArea.SCROLLBARS_VERTICAL_ONLY);
 		aboutTextArea.setEditable(false);
 		aboutTextArea.append("Written by fatmanspanda"); // hey, that's me
@@ -135,29 +136,44 @@ public class SpriteFilter {
 				"http://github.com/fatmanspanda/ALttPNG/wiki"
 				}, ", "));
 		aboutFrame.add(aboutTextArea);
-		aboutMenu.addActionListener(
-			arg0 -> {
-				aboutFrame.setVisible(true);
-			});
 		aboutFrame.setSize(d2);
 
-		// menu 
+		// menu
 		final JMenuBar menu = new JMenuBar();
-		menu.add(aboutMenu);
+		final JMenu fileMenu = new JMenu("File");
+
+		// exit
+		final JMenuItem exit = new JMenuItem("Exit");
+		ImageIcon mirror = new ImageIcon(
+				SpriteFilter.class.getResource("/SpriteFilter/Mirror.png")
+			);
+		exit.setIcon(mirror);
+		fileMenu.add(exit);
+		exit.addActionListener(arg0 -> System.exit(0));
+
+		menu.add(fileMenu);
+		// end file menu
+
+		// help menu
+		final JMenu helpMenu = new JMenu("Help");
+
+		// Acknowledgements
+		final JMenuItem peeps = new JMenuItem("About");
+		ImageIcon mapIcon = new ImageIcon(
+				SpriteFilter.class.getResource("/SpriteFilter/Map.png")
+			);
+		peeps.setIcon(mapIcon);
+		helpMenu.add(peeps);
+		peeps.addActionListener(
+				arg0 -> {
+					aboutFrame.setVisible(true);
+				});
+		menu.add(helpMenu);
+		// end help menu
+
 		frame.setJMenuBar(menu);
 
-		Border bothPad = BorderFactory.createEmptyBorder(0,6,0,6);
-		Border allPad = BorderFactory.createEmptyBorder(3,3,3,3);
-		Border bottomPad = BorderFactory.createEmptyBorder(0,0,3,0);
-		Border smAllPad = BorderFactory.createEmptyBorder(1,1,1,1);
-
-		final JTextField fileName = new JTextField(""); // filename text field
-		final JTextField flags = new JTextField(); // flags text field
-		final JButton fileNameBtn = new JButton("Load SPR");
-		final JButton goBtn = new JButton("Apply Filter!");
-		final JLabel optlbl = new JLabel("Flag and filter");
-		optlbl.setBorder(bothPad);
-
+		// filters
 		String[] filterNames = new String[FILTERS.length];
 		for (int i = 0; i < filterNames.length; i++) {
 			filterNames[i] = FILTERS[i][0];
@@ -165,36 +181,69 @@ public class SpriteFilter {
 
 		FileNameExtensionFilter sprFilter =
 				new FileNameExtensionFilter("ALttP Sprite files", new String[] { "spr" });
+		Container wrap = frame.getContentPane();
+		SpringLayout l = new SpringLayout();
+		wrap.setLayout(l);
+		final JTextField fileName = new JTextField(""); // filename text field
+		final JButton fileNameBtn = new JButton("Load SPR");
+
+		l.putConstraint(SpringLayout.NORTH, fileName, 5,
+				SpringLayout.NORTH, wrap);
+		l.putConstraint(SpringLayout.WEST, fileName, 5,
+				SpringLayout.WEST, wrap);	
+		l.putConstraint(SpringLayout.EAST, fileName, -5,
+				SpringLayout.WEST, fileNameBtn);
+		wrap.add(fileName);
+
+		l.putConstraint(SpringLayout.NORTH, fileNameBtn, -2,
+				SpringLayout.NORTH, fileName);
+		l.putConstraint(SpringLayout.EAST, fileNameBtn, -5,
+						SpringLayout.EAST, wrap);
+		wrap.add(fileNameBtn);
+
+		// flags 
+		final JLabel flagsLbl = new JLabel("Flag and filter");
+		final JTextField flags = new JTextField();
 		final JComboBox<String> options = new JComboBox<String>(filterNames);
-		final JPanel frame2 = new JPanel(new BorderLayout());
-		final JPanel imgWrap = new JPanel(new BorderLayout());
-		final JPanel filtWrap = new JPanel(new BorderLayout());
-		final JPanel goWrap = new JPanel(new BorderLayout());
-		final JPanel goBtnWrap = new JPanel(new BorderLayout());
-		final JPanel bothWrap = new JPanel(new BorderLayout());
 
-		frame2.setBorder(allPad);
-		goWrap.setBorder(smAllPad);
-		imgWrap.setBorder(bottomPad);
+		l.putConstraint(SpringLayout.NORTH, flagsLbl, 5,
+				SpringLayout.SOUTH, fileName);
+		l.putConstraint(SpringLayout.WEST, flagsLbl, 5,
+						SpringLayout.WEST, wrap);
+		wrap.add(flagsLbl);
 
-		imgWrap.add(fileName,BorderLayout.CENTER);
-		imgWrap.add(fileNameBtn,BorderLayout.EAST);
-		goWrap.add(flags,BorderLayout.NORTH);
-		goWrap.add(options,BorderLayout.EAST);
-		goWrap.add(optlbl,BorderLayout.WEST);
-		goWrap.add(flagTextInfo,BorderLayout.SOUTH);
-		goBtnWrap.add(goBtn, BorderLayout.NORTH);
-		frame2.add(flagTextInfo,BorderLayout.CENTER);
-		filtWrap.add(goBtnWrap,BorderLayout.CENTER);
-		filtWrap.add(goWrap,BorderLayout.WEST);
-		bothWrap.add(imgWrap,BorderLayout.NORTH);
-		bothWrap.add(filtWrap,BorderLayout.SOUTH);
-		frame2.add(bothWrap,BorderLayout.NORTH);
-		frame.add(frame2);
-		frame.setSize(d);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setResizable(false);
-		frame.setLocation(200,200);
+		l.putConstraint(SpringLayout.NORTH, options, -2,
+				SpringLayout.NORTH, flagsLbl);
+		l.putConstraint(SpringLayout.WEST, options, 5,
+				SpringLayout.EAST, flagsLbl);
+		wrap.add(options);
+
+		l.putConstraint(SpringLayout.NORTH, flags, 0,
+				SpringLayout.NORTH, options);
+		l.putConstraint(SpringLayout.WEST, flags, 5,
+				SpringLayout.EAST, options);
+		l.putConstraint(SpringLayout.EAST, flags, 5,
+				SpringLayout.HORIZONTAL_CENTER, wrap);
+		wrap.add(flags);
+
+		// apply button
+		final JButton goBtn = new JButton("Apply filter!");
+		l.putConstraint(SpringLayout.NORTH, goBtn, -2,
+				SpringLayout.NORTH, options);
+		l.putConstraint(SpringLayout.WEST, goBtn, 5,
+				SpringLayout.EAST, flags);
+		l.putConstraint(SpringLayout.EAST, goBtn, -5,
+				SpringLayout.EAST, wrap);
+		wrap.add(goBtn);
+
+		// filter info
+		l.putConstraint(SpringLayout.NORTH, flagTextInfo, 5,
+				SpringLayout.SOUTH, flagsLbl);
+		l.putConstraint(SpringLayout.WEST, flagTextInfo, 5,
+				SpringLayout.WEST, wrap);
+		l.putConstraint(SpringLayout.EAST, flagTextInfo, -5,
+				SpringLayout.EAST, wrap);
+		wrap.add(flagTextInfo);
 
 		// ico - Credit goes to Hoodyha
 		final ImageIcon ico = new ImageIcon(
@@ -202,11 +251,18 @@ public class SpriteFilter {
 			);
 		frame.setIconImage(ico.getImage());
 
+		// frame display
+		frame.setSize(d);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setResizable(false);
+		frame.setLocation(200,200);
+
 		// file explorer
 		final JFileChooser explorer = new JFileChooser();
 		// can't clear text due to wonky code
 		// have to set a blank file instead
 		final File EEE = new File("");
+
 		options.addActionListener(
 			arg0 -> {
 				int option = options.getSelectedIndex();
