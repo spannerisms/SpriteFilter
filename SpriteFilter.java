@@ -127,19 +127,22 @@ public class SpriteFilter {
 		aboutTextArea.append("Written by fatmanspanda"); // hey, that's me
 		aboutTextArea.append("\n\nSpecial thanks:\nMikeTrethewey"); // force me to do this and falls in every category
 		aboutTextArea.append("\n\nResources and development:\n");
-		aboutTextArea.append(join(new String[]{
-				"Veetorp", // provided most valuable documentation
-				"Zarby89", // various documentation and answers
-				"Sosuke3" // various snes code answers
-				}, ", "));
+		aboutTextArea.append(String.join(", ",
+				new String[]{
+						"Veetorp", // provided most valuable documentation
+						"Zarby89", // various documentation and answers
+						"Sosuke3" // various snes code answers
+				}));
 		aboutTextArea.append("\n\nIcon by:\n");
-		aboutTextArea.append(join(new String[]{
-				"Hoodyha"
-				}, ", "));
+		aboutTextArea.append(String.join(", ",
+				new String[]{
+						"Hoodyha"
+				}));
 		aboutTextArea.append("\n\nUpdates at:\n");
-		aboutTextArea.append(join(new String[]{
-				"http://github.com/fatmanspanda/ALttPNG/wiki"
-				}, ", "));
+		aboutTextArea.append(String.join(", ",
+				new String[]{
+						"http://github.com/fatmanspanda/ALttPNG/wiki"
+				}));
 		aboutFrame.add(aboutTextArea);
 		aboutFrame.setSize(d2);
 
@@ -184,12 +187,13 @@ public class SpriteFilter {
 			filterNames[i] = FILTERS[i][0];
 		}
 
-		FileNameExtensionFilter sprFilter =
-				new FileNameExtensionFilter("ALttP Sprite files", new String[] { "spr" });
+		// GUI layout
 		Container wrap = frame.getContentPane();
 		SpringLayout l = new SpringLayout();
 		wrap.setLayout(l);
-		final JTextField fileName = new JTextField(""); // filename text field
+
+		// file name
+		final JTextField fileName = new JTextField("");
 		final JButton fileNameBtn = new JButton("Load SPR");
 
 		l.putConstraint(SpringLayout.NORTH, fileName, 5,
@@ -264,7 +268,9 @@ public class SpriteFilter {
 
 		// file explorer
 		final JFileChooser explorer = new JFileChooser();
-
+		FileNameExtensionFilter sprFilter =
+				new FileNameExtensionFilter("ALttP Sprite files", new String[] { "spr" });
+		explorer.setFileFilter(sprFilter);
 		explorer.setCurrentDirectory(new File(".")); // quick way to set to current .jar loc
 
 		// can't clear text due to wonky code
@@ -284,9 +290,7 @@ public class SpriteFilter {
 
 		fileNameBtn.addActionListener(
 			arg0 -> {
-				explorer.removeChoosableFileFilter(sprFilter);
 				explorer.setSelectedFile(EEE);
-				explorer.setFileFilter(sprFilter);
 				int option = explorer.showOpenDialog(fileNameBtn);
 				if (option == JFileChooser.CANCEL_OPTION) {
 					return;
@@ -301,7 +305,6 @@ public class SpriteFilter {
 						fileName.setText(n);
 					}
 				}
-				explorer.removeChoosableFileFilter(sprFilter);
 			});
 
 		goBtn.addActionListener(
@@ -615,34 +618,5 @@ public class SpriteFilter {
 			}
 		}
 		return img;
-	}
-
-	/*
-	 * 
-	 * 
-	 * End of filters
-	 * 
-	 * 
-	 * 
-	 */
-	/*
-	 * GUI related functions
-	 */
-
-	/**
-	 * Join array of strings together with a delimiter.
-	 * @param s - array of strings
-	 * @param c - delimiter
-	 * @return A single {@code String}.
-	 */
-	public static String join(String[] s, String c) {
-		String ret = "";
-		for (int i = 0; i < s.length; i++) {
-			ret += s[i];
-			if (i != s.length-1) {
-				ret += c;
-			}
-		}
-		return ret;
 	}
 }
