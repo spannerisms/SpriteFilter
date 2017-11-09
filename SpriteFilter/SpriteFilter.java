@@ -362,8 +362,9 @@ public class SpriteFilter {
 							JOptionPane.WARNING_MESSAGE);
 					return;
 				}
+				String shortName = exportedName.substring(exportedName.lastIndexOf('\\')+1);
 				JOptionPane.showMessageDialog(frame,
-						"Sprite successfully filtered and written to:\n" + exportedName,
+						"Sprite successfully filtered and written to:\n" + shortName,
 						"YAY",
 						JOptionPane.PLAIN_MESSAGE);
 			});
