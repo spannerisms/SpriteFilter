@@ -30,7 +30,7 @@ import SpriteManipulator.*;
 
 public class SpriteFilter {
 	// version number
-	static final String VERSION = "v1.3";
+	static final String VERSION = "v1.4";
 
 	// class constants
 	static final int SPRITESIZE = SpriteManipulator.SPRITE_DATA_SIZE; // invariable lengths
