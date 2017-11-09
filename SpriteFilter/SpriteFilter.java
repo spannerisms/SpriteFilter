@@ -153,7 +153,7 @@ public class SpriteFilter {
 		// exit
 		final JMenuItem exit = new JMenuItem("Exit");
 		ImageIcon mirror = new ImageIcon(
-				SpriteFilter.class.getResource("/images/mirror.png")
+				SpriteFilter.class.getResource("images/mirror.png")
 			);
 		exit.setIcon(mirror);
 		fileMenu.add(exit);
@@ -168,7 +168,7 @@ public class SpriteFilter {
 		// Acknowledgements
 		final JMenuItem peeps = new JMenuItem("About");
 		ImageIcon mapIcon = new ImageIcon(
-				SpriteFilter.class.getResource("/images/map.png")
+				SpriteFilter.class.getResource("images/map.png")
 			);
 		peeps.setIcon(mapIcon);
 		helpMenu.add(peeps);
@@ -256,7 +256,7 @@ public class SpriteFilter {
 
 		// ico - Credit goes to Hoodyha
 		final ImageIcon ico = new ImageIcon(
-				SpriteFilter.class.getResource("/images/ico.png")
+				SpriteFilter.class.getResource("images/ico.png")
 			);
 		frame.setIconImage(ico.getImage());
 
