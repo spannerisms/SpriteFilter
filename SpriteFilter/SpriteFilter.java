@@ -344,8 +344,12 @@ public class SpriteFilter {
 				eightXeight = filter(eightXeight,filterToken, flags.getText());
 				byte[] fullMap = SpriteManipulator.export8x8ToSPR(eightXeight);
 				spr.setSpriteData(fullMap);
+
 				String exportedName = fileN.substring(0,fileN.lastIndexOf('.')) +
 						" (" + FILTERS[filterToken][0].toLowerCase() + ").spr";
+				String sName = spr.getSpriteName() + " (" + FILTERS[filterToken][0].toLowerCase() + ")";
+				spr.setSpriteName(sName);
+
 				try {
 					SpriteManipulator.writeSPRFile(exportedName, spr);
 				} catch (IOException
