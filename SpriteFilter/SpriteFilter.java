@@ -133,11 +133,6 @@ public class SpriteFilter {
 						"Zarby89", // various documentation and answers
 						"Sosuke3" // various snes code answers
 				}));
-		aboutTextArea.append("\n\nIcon by:\n");
-		aboutTextArea.append(String.join(", ",
-				new String[]{
-						"Hoodyha"
-				}));
 		aboutTextArea.append("\n\nUpdates at:\n");
 		aboutTextArea.append(String.join(", ",
 				new String[]{
