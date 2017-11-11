@@ -342,7 +342,7 @@ public class SpriteFilter {
 				spr.setSpriteData(fullMap);
 
 				String exportedName = fileN.substring(0,fileN.lastIndexOf('.')) +
-						" (" + FILTERS[filterToken][0].toLowerCase() + ").spr";
+						" (" + FILTERS[filterToken][0].toLowerCase() + ")." + SPRFile.EXTENSION;
 				String sName = spr.getSpriteName() + " (" + FILTERS[filterToken][0].toLowerCase() + ")";
 				spr.setSpriteName(sName);
 
@@ -352,6 +352,7 @@ public class SpriteFilter {
 						| NotZSPRException
 						| BadChecksumException
 						e) {
+					e.printStackTrace();
 					JOptionPane.showMessageDialog(frame,
 							"Error writing sprite",
 							"Oops",
