@@ -265,7 +265,7 @@ public class SpriteFilter {
 		final JFileChooser explorer = new JFileChooser();
 		explorer.setAcceptAllFileFilterUsed(false);
 		explorer.setFileFilter(new FileNameExtensionFilter(
-				"ALttP Sprite files", new String[] { SPRFile.EXTENSION }));
+				"ALttP Sprite files", new String[] { ZSPRFile.EXTENSION }));
 		explorer.setCurrentDirectory(new File(".")); // quick way to set to current .jar loc
 
 		// can't clear text due to wonky code
@@ -296,7 +296,7 @@ public class SpriteFilter {
 				} catch (NullPointerException e) {
 					// do nothing
 				} finally {
-					if (SpriteManipulator.testFileType(n,SPRFile.EXTENSION)) {
+					if (SpriteManipulator.testFileType(n,ZSPRFile.EXTENSION)) {
 						fileName.setText(n);
 					}
 				}
@@ -305,9 +305,9 @@ public class SpriteFilter {
 		goBtn.addActionListener(
 			arg0 -> {
 				String fileN = fileName.getText();
-				SPRFile spr;
+				ZSPRFile spr;
 				try {
-					spr = SPRFile.readFile(fileN);
+					spr = ZSPRFile.readFile(fileN);
 				} catch (IOException e) {
 					JOptionPane.showMessageDialog(frame,
 							"Error reading sprite",
@@ -322,7 +322,7 @@ public class SpriteFilter {
 					return;
 				} catch (NotZSPRException e) {
 					JOptionPane.showMessageDialog(frame,
-							"File is not a " + SPRFile.EXTENSION + " file",
+							"File is not a " + ZSPRFile.EXTENSION + " file",
 							"Not my job",
 							JOptionPane.WARNING_MESSAGE);
 					return;
@@ -342,7 +342,7 @@ public class SpriteFilter {
 				spr.setSpriteData(fullMap);
 
 				String exportedName = fileN.substring(0,fileN.lastIndexOf('.')) +
-						" (" + FILTERS[filterToken][0].toLowerCase() + ")." + SPRFile.EXTENSION;
+						" (" + FILTERS[filterToken][0].toLowerCase() + ")." + ZSPRFile.EXTENSION;
 				String sName = spr.getSpriteName() + " (" + FILTERS[filterToken][0].toLowerCase() + ")";
 				spr.setSpriteName(sName);
 
