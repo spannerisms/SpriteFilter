@@ -189,7 +189,7 @@ public class SpriteFilter {
 
 		// file name
 		final JTextField fileName = new JTextField("");
-		final JButton fileNameBtn = new JButton("Load SPR");
+		final JButton fileNameBtn = new JButton("Load sprite");
 
 		l.putConstraint(SpringLayout.NORTH, fileName, 5,
 				SpringLayout.NORTH, wrap);
@@ -264,7 +264,8 @@ public class SpriteFilter {
 		// file explorer
 		final JFileChooser explorer = new JFileChooser();
 		explorer.setAcceptAllFileFilterUsed(false);
-		explorer.setFileFilter(new FileNameExtensionFilter("ALttP Sprite files", new String[] { "spr" }));
+		explorer.setFileFilter(new FileNameExtensionFilter(
+				"ALttP Sprite files", new String[] { SPRFile.EXTENSION }));
 		explorer.setCurrentDirectory(new File(".")); // quick way to set to current .jar loc
 
 		// can't clear text due to wonky code
@@ -295,7 +296,7 @@ public class SpriteFilter {
 				} catch (NullPointerException e) {
 					// do nothing
 				} finally {
-					if (SpriteManipulator.testFileType(n,"spr")) {
+					if (SpriteManipulator.testFileType(n,SPRFile.EXTENSION)) {
 						fileName.setText(n);
 					}
 				}
@@ -319,9 +320,9 @@ public class SpriteFilter {
 							"Y'all old",
 							JOptionPane.WARNING_MESSAGE);
 					return;
-				} catch (NotSPRException e) {
+				} catch (NotZSPRException e) {
 					JOptionPane.showMessageDialog(frame,
-							"File is not SPR file",
+							"File is not a " + SPRFile.EXTENSION + " file",
 							"Not my job",
 							JOptionPane.WARNING_MESSAGE);
 					return;
@@ -348,7 +349,7 @@ public class SpriteFilter {
 				try {
 					SpriteManipulator.writeSPRFile(exportedName, spr);
 				} catch (IOException
-						| NotSPRException
+						| NotZSPRException
 						| BadChecksumException
 						e) {
 					JOptionPane.showMessageDialog(frame,
