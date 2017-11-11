@@ -372,14 +372,6 @@ public class SpriteFilter {
 		frame.setVisible(true);
 	}
 
-	/*
-	 * 
-	 * 
-	 * Start of filters
-	 * 
-	 * 
-	 * 
-	 */
 	/**
 	 * Apply a filter based on a token.
 	 * @param img - image map to screw up
