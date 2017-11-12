@@ -262,7 +262,7 @@ public class SpriteFilter {
 		frame.setLocation(200,200);
 
 		// file explorer
-		final JFileChooser explorer = new JFileChooser();
+		final BetterJFileChooser explorer = new BetterJFileChooser();
 		explorer.setAcceptAllFileFilterUsed(false);
 		explorer.setFileFilter(new FileNameExtensionFilter(
 				"ALttP Sprite files", new String[] { ZSPRFile.EXTENSION }));
