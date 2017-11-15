@@ -314,22 +314,10 @@ public class SpriteFilter {
 							"Oops",
 							JOptionPane.WARNING_MESSAGE);
 					return;
-				} catch (ObsoleteSPRFormatException e) {
+				} catch (ZSPRFormatException e) {
 					JOptionPane.showMessageDialog(frame,
 							e.getMessage(),
-							"Y'all old",
-							JOptionPane.WARNING_MESSAGE);
-					return;
-				} catch (NotZSPRException e) {
-					JOptionPane.showMessageDialog(frame,
-							"File is not a " + ZSPRFile.EXTENSION + " file",
-							"Not my job",
-							JOptionPane.WARNING_MESSAGE);
-					return;
-				} catch (BadChecksumException e) {
-					JOptionPane.showMessageDialog(frame,
-							"Bad Checksum; file may be corrupted",
-							"Invalid",
+							"PROBLEM",
 							JOptionPane.WARNING_MESSAGE);
 					return;
 				}
@@ -349,9 +337,7 @@ public class SpriteFilter {
 				try {
 					SpriteManipulator.writeSPRFile(exportedName, spr);
 				} catch (IOException
-						| NotZSPRException
-						| BadChecksumException
-						e) {
+						| ZSPRFormatException e) {
 					e.printStackTrace();
 					JOptionPane.showMessageDialog(frame,
 							"Error writing sprite",
