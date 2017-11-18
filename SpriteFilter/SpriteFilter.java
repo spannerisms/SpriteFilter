@@ -2,7 +2,6 @@ package SpriteFilter;
 
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -30,54 +29,12 @@ import SpriteManipulator.*;
 
 public class SpriteFilter {
 	// version number
-	static final String VERSION = "v1.4";
+	static final String VERSION = "v1.5";
 
 	// class constants
 	static final int SPRITESIZE = SpriteManipulator.SPRITE_DATA_SIZE; // invariable lengths
 	static final int PALETTESIZE = SpriteManipulator.PAL_DATA_SIZE;
 	static final String HEX = "0123456789ABCDEF"; // HEX values
-
-	// format of snes 4bpp {row (r), bit plane (b)}
-	// bit plane 0 indexed such that 1011 corresponds to 0123
-	static final int BPPI[][] = {
-			{0,0},{0,1},{1,0},{1,1},{2,0},{2,1},{3,0},{3,1},
-			{4,0},{4,1},{5,0},{5,1},{6,0},{6,1},{7,0},{7,1},
-			{0,2},{0,3},{1,2},{1,3},{2,2},{2,3},{3,2},{3,3},
-			{4,2},{4,3},{5,2},{5,3},{6,2},{6,3},{7,2},{7,3}
-	};
-
-	// descriptions of filters
-	static final String[][] FILTERS = {
-			{ "Static",
-				"Randomizes pixels of specific indices.",
-				"Flag accepts HEX values (0-F) of which indices to randomize; defaults to 1-F.\n" +
-				"Prefix with '-' to inverse selection."},
-			{ "Index swap",
-				"Swaps pixel indices to the other end of the palette, ignoring transparent colors"
-					+ "; e.g. 0x1 with 0xF, 0x2 with 0xE, etc.",
-				null },
-			{ "Line shift",
-				"Shifts even rows to the right and odd rows to the left by 1 pixel.",
-				null },
-			{ "Palette shift",
-				"Shifts all pixels a specific number of palette indices to the right.",
-				"Flag accepts an integer number (decimal) of spaces to shift each index; defaults to 5"},
-			{ "Row swap",
-				"Swaps even rows with odd rows.",
-				null },
-			{ "Column swap",
-				"Swaps even columns with odd columns.",
-				null },
-			{ "Buzz swap",
-				"Swaps both even and odd rows and columns, simultaneously.",
-				null },
-			{ "X-Squish",
-				"Squishes sprite horizontally.",
-				null },
-			{ "Y-Squish",
-				"Squishes sprite vertically.",
-				null },
-			};
 
 	// main
 	public static void main(String[] args) {
@@ -90,14 +47,6 @@ public class SpriteFilter {
 
 	// GUI
 	public static void doTheGUI() {
-		// have to have this up here or LAF overrides everything
-		// stupid LAF
-		final JTextPane flagTextInfo = new JTextPane();
-		flagTextInfo.setFont(new Font(flagTextInfo.getFont().getFontName(), Font.PLAIN, 10));
-		flagTextInfo.setEditable(false);
-		flagTextInfo.setHighlighter(null);
-		flagTextInfo.setBackground(null);
-
 		//try to set LAF
 		try {
 			UIManager.setLookAndFeel("metal");
@@ -122,7 +71,7 @@ public class SpriteFilter {
 
 		// about frame
 		final JDialog aboutFrame = new JDialog(frame, "About");
-		final TextArea aboutTextArea = new TextArea("",0,0,TextArea.SCROLLBARS_VERTICAL_ONLY);
+		final TextArea aboutTextArea = new TextArea("", 0, 0, TextArea.SCROLLBARS_VERTICAL_ONLY);
 		aboutTextArea.setEditable(false);
 		aboutTextArea.append("Written by fatmanspanda"); // hey, that's me
 		aboutTextArea.append("\n\nSpecial thanks:\nMikeTrethewey"); // force me to do this and falls in every category
@@ -143,7 +92,11 @@ public class SpriteFilter {
 
 		// menu
 		final JMenuBar menu = new JMenuBar();
+		frame.setJMenuBar(menu);
+
+		// file menu
 		final JMenu fileMenu = new JMenu("File");
+		menu.add(fileMenu);
 
 		// exit
 		final JMenuItem exit = new JMenuItem("Exit");
@@ -151,14 +104,14 @@ public class SpriteFilter {
 				SpriteFilter.class.getResource("/SpriteFilter/images/mirror.png")
 			);
 		exit.setIcon(mirror);
-		fileMenu.add(exit);
 		exit.addActionListener(arg0 -> System.exit(0));
+		fileMenu.add(exit);
 
-		menu.add(fileMenu);
 		// end file menu
 
 		// help menu
 		final JMenu helpMenu = new JMenu("Help");
+		menu.add(helpMenu);
 
 		// Acknowledgements
 		final JMenuItem peeps = new JMenuItem("About");
@@ -166,21 +119,14 @@ public class SpriteFilter {
 				SpriteFilter.class.getResource("/SpriteFilter/images/map.png")
 			);
 		peeps.setIcon(mapIcon);
-		helpMenu.add(peeps);
+
 		peeps.addActionListener(
 				arg0 -> {
 					aboutFrame.setVisible(true);
 				});
-		menu.add(helpMenu);
+		helpMenu.add(peeps);
+
 		// end help menu
-
-		frame.setJMenuBar(menu);
-
-		// filters
-		String[] filterNames = new String[FILTERS.length];
-		for (int i = 0; i < filterNames.length; i++) {
-			filterNames[i] = FILTERS[i][0];
-		}
 
 		// GUI layout
 		Container wrap = frame.getContentPane();
@@ -208,7 +154,7 @@ public class SpriteFilter {
 		// flags 
 		final JLabel flagsLbl = new JLabel("Flag and filter");
 		final JTextField flags = new JTextField();
-		final JComboBox<String> options = new JComboBox<String>(filterNames);
+		final JComboBox<Filter> options = new JComboBox<Filter>(Filter.values());
 
 		l.putConstraint(SpringLayout.NORTH, flagsLbl, 5,
 				SpringLayout.SOUTH, fileName);
@@ -241,6 +187,10 @@ public class SpriteFilter {
 		wrap.add(goBtn);
 
 		// filter info
+		final JTextPane flagTextInfo = new JTextPane();
+		flagTextInfo.setEditable(false);
+		flagTextInfo.setHighlighter(null);
+		flagTextInfo.setBackground(null);
 		l.putConstraint(SpringLayout.NORTH, flagTextInfo, 5,
 				SpringLayout.SOUTH, flagsLbl);
 		l.putConstraint(SpringLayout.WEST, flagTextInfo, 5,
@@ -249,7 +199,7 @@ public class SpriteFilter {
 				SpringLayout.EAST, wrap);
 		wrap.add(flagTextInfo);
 
-		// ico - Credit goes to Hoodyha
+		// ico
 		final ImageIcon ico = new ImageIcon(
 				SpriteFilter.class.getResource("/SpriteFilter/images/ico.png")
 			);
@@ -274,12 +224,9 @@ public class SpriteFilter {
 
 		options.addActionListener(
 			arg0 -> {
-				int option = options.getSelectedIndex();
-				String filterText = FILTERS[option][1];
-				String flagText = FILTERS[option][2];
-				if (flagText == null) {
-					flagText = "No flag options available for this filter.";
-				}
+				Filter option = (Filter) options.getSelectedItem();
+				String filterText = option.desc;
+				String flagText = option.flagHelp;
 				flagTextInfo.setText(filterText + "\n" + flagText);
 			});
 
@@ -296,7 +243,7 @@ public class SpriteFilter {
 				} catch (NullPointerException e) {
 					// do nothing
 				} finally {
-					if (SpriteManipulator.testFileType(n,ZSPRFile.EXTENSION)) {
+					if (SpriteManipulator.testFileType(n, ZSPRFile.EXTENSION)) {
 						fileName.setText(n);
 					}
 				}
@@ -322,16 +269,17 @@ public class SpriteFilter {
 					return;
 				}
 
-				int filterToken = options.getSelectedIndex();
+				Filter option = (Filter) options.getSelectedItem();
+				String optionName = option.toString().toLowerCase();
 				byte[] sprData = spr.getSpriteData();
 				byte[][][] eightXeight = SpriteManipulator.makeSpr8x8(sprData);
-				eightXeight = filter(eightXeight,filterToken, flags.getText());
+				eightXeight = option.runFilter(eightXeight, flags.getText());
 				byte[] fullMap = SpriteManipulator.export8x8ToSPR(eightXeight);
 				spr.setSpriteData(fullMap);
 
 				String exportedName = fileN.substring(0,fileN.lastIndexOf('.')) +
-						" (" + FILTERS[filterToken][0].toLowerCase() + ")." + ZSPRFile.EXTENSION;
-				String sName = spr.getSpriteName() + " (" + FILTERS[filterToken][0].toLowerCase() + ")";
+						" (" + optionName + ")." + ZSPRFile.EXTENSION;
+				String sName = spr.getSpriteName() + " (" + optionName + ")";
 				spr.setSpriteName(sName);
 
 				try {
@@ -359,48 +307,7 @@ public class SpriteFilter {
 	}
 
 	/**
-	 * Apply a filter based on a token.
-	 * @param img - image map to screw up
-	 * @param c - filter token
-	 * @param f - flag
-	 */
-	public static byte[][][] filter(byte[][][] img, int c, String f) {
-		byte[][][] ret = img.clone();
-		switch(c) {
-			case 0 :
-				ret = staticFilter(ret, f);
-				break;
-			case 1 :
-				ret = swapFilter(ret);
-				break;
-			case 2 :
-				ret = lineShiftFilter(ret);
-				break;
-			case 3 :
-				ret = palShiftFilter(ret, f);
-				break;
-			case 4 :
-				ret = rowSwapFilter(ret);
-				break;
-			case 5 :
-				ret = columnSwapFilter(ret);
-				break;
-			case 6 :
-				ret = buzzSwapFilter(ret);
-				break;
-			case 7 :
-				ret = squishFilter(ret);
-				break;
-			case 8 :
-				ret = squashFilter(ret);
-				break;
-		}
-
-		return ret;
-	}
-
-	/**
-	 * Randomizes all desired pixels.
+	 * Randomizes all desired pixels
 	 * @param img
 	 */
 	public static byte[][][] staticFilter(byte[][][] img, String f) {
@@ -408,6 +315,7 @@ public class SpriteFilter {
 		if (f.equals("")) {
 			f = "-0";
 		}
+
 		// check if we're inversed
 		boolean inversed = false;
 		try {
@@ -415,11 +323,11 @@ public class SpriteFilter {
 		} catch (Exception e) {
 			// do nothing
 		}
+
 		// clear all non HEX values
 		f = f.toUpperCase();
 		f = f.replaceAll("[^0-9A-F]", "");
 
-		// default to all but trans pixel
 		// find which hex numbers exist in flags
 		boolean[] randomize = new boolean[16];
 		for (int i = 0; i < HEX.length(); i++) {
@@ -427,6 +335,7 @@ public class SpriteFilter {
 				randomize[i] = true;
 			}
 		}
+
 		if (inversed) {
 			for (int i = 0; i < randomize.length; i++) {
 				randomize[i] = !randomize[i];
@@ -442,6 +351,7 @@ public class SpriteFilter {
 				}
 			}
 		}
+
 		return img;
 	}
 
@@ -618,5 +528,80 @@ public class SpriteFilter {
 			}
 		}
 		return img;
+	}
+
+	/**
+	 * List of filters with descriptions and lambda'd operation
+	 */
+	private enum Filter {
+		STATIC ("Static",
+				"Randomizes pixels of specific indices.",
+				"Flag accepts HEX values (0-F) of which indices to randomize; defaults to 1-F.\n" +
+						"Prefix with '-' to inverse selection.",
+						(ebe, flags) -> { return staticFilter(ebe, flags); }
+				),
+		INDEX_SWAP ("Index swap",
+					"Swaps pixel indices to the other end of the palette, ignoring transparent colors; "
+							+ "e.g. 0x1 with 0xF, 0x2 with 0xE, etc.",
+							(ebe, flags) -> { return swapFilter(ebe); }
+				),
+		LINE_SHIFT ("Line shift",
+					"Shifts even rows to the right and odd rows to the left by 1 pixel.",
+					(ebe, flags) -> { return lineShiftFilter(ebe); }
+				),
+		PALETTE_SHIFT ("Palette shift",
+						"Shifts all pixels a specific number of palette indices to the right.",
+						"Flag accepts an integer number (decimal) of spaces to shift each index; defaults to 5",
+						(ebe, flags) -> { return palShiftFilter(ebe, flags); }
+				),
+		ROW_SWAP ("Row swap",
+					"Swaps even rows with odd rows.",
+					(ebe, flags) -> { return rowSwapFilter(ebe); }
+				),
+		COLUMN_SWAP ("Column swap",
+					"Swaps even columns with odd columns.",
+					(ebe, flags) -> { return columnSwapFilter(ebe); }
+				),
+		BUZZ_SWAP ("Buzz swap",
+					"Swaps both even and odd rows and columns, simultaneously.",
+					(ebe, flags) -> { return buzzSwapFilter(ebe); }
+				),
+		X_SQUISH ("X-Squish",
+					"Squishes sprite horizontally.",
+					(ebe, flags) -> { return squishFilter(ebe); }
+				),
+		Y_SQUISH ("Y-Squish",
+					"Squishes sprite vertically.",
+					(ebe, flags) -> { return squashFilter(ebe); }
+				);
+
+		// local vars
+		public final String name;
+		public final String desc;
+		public final String flagHelp;
+		private final FilterOp runner;
+
+		private Filter(String name, String desc, String flagHelp, FilterOp runner) {
+			this.name = name;
+			this.desc = desc;
+			this.flagHelp = flagHelp;
+			this.runner = runner;
+		}
+
+		private Filter(String name, String desc, FilterOp runner) {
+			this(name, desc, "No flag options available for this filter.", runner);
+		}
+
+		public String toString() {
+			return name;
+		}
+
+		public byte[][][] runFilter(byte[][][] ebe, String flags) {
+			return runner.doIt(ebe, flags);
+		}
+
+		private interface FilterOp {
+			byte[][][] doIt(byte[][][] ebe, String flags);
+		}
 	}
 }
