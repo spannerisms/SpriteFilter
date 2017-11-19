@@ -22,7 +22,6 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.SpringLayout;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import SpriteManipulator.*;
@@ -47,23 +46,12 @@ public class SpriteFilter {
 
 	// GUI
 	public static void doTheGUI() {
-		//try to set LAF
+		// try to set LaF
 		try {
-			UIManager.setLookAndFeel("metal");
-		} catch (UnsupportedLookAndFeelException
-				| ClassNotFoundException
-				| InstantiationException
-				| IllegalAccessException e) {
-			// try to set System default
-			try {
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			} catch (UnsupportedLookAndFeelException
-					| ClassNotFoundException
-					| InstantiationException
-					| IllegalAccessException e2) {
-					// do nothing
-			} //end System
-		} // end LAF
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e2) {
+				// do nothing
+		} //end System
 
 		final JFrame frame = new JFrame("Sprite Filter " + VERSION); // frame name
 		final Dimension d = new Dimension(600, 382);
