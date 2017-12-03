@@ -26,6 +26,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import SpriteManipulator.*;
 
+import static javax.swing.SpringLayout.*;
+
 public class SpriteFilter {
 	// version number
 	static final String VERSION = "v1.5";
@@ -125,18 +127,13 @@ public class SpriteFilter {
 		final JTextField fileName = new JTextField("");
 		final JButton fileNameBtn = new JButton("Load sprite");
 
-		l.putConstraint(SpringLayout.NORTH, fileName, 5,
-				SpringLayout.NORTH, wrap);
-		l.putConstraint(SpringLayout.WEST, fileName, 5,
-				SpringLayout.WEST, wrap);	
-		l.putConstraint(SpringLayout.EAST, fileName, -5,
-				SpringLayout.WEST, fileNameBtn);
+		l.putConstraint(NORTH, fileName, 5, NORTH, wrap);
+		l.putConstraint(WEST, fileName, 5, WEST, wrap);	
+		l.putConstraint(EAST, fileName, -5, WEST, fileNameBtn);
 		wrap.add(fileName);
 
-		l.putConstraint(SpringLayout.NORTH, fileNameBtn, -2,
-				SpringLayout.NORTH, fileName);
-		l.putConstraint(SpringLayout.EAST, fileNameBtn, -5,
-						SpringLayout.EAST, wrap);
+		l.putConstraint(NORTH, fileNameBtn, -2, NORTH, fileName);
+		l.putConstraint(EAST, fileNameBtn, -5, EAST, wrap);
 		wrap.add(fileNameBtn);
 
 		// flags 
@@ -144,34 +141,24 @@ public class SpriteFilter {
 		final JTextField flags = new JTextField();
 		final JComboBox<Filter> options = new JComboBox<Filter>(Filter.values());
 
-		l.putConstraint(SpringLayout.NORTH, flagsLbl, 5,
-				SpringLayout.SOUTH, fileName);
-		l.putConstraint(SpringLayout.WEST, flagsLbl, 5,
-						SpringLayout.WEST, wrap);
+		l.putConstraint(NORTH, flagsLbl, 5, SOUTH, fileName);
+		l.putConstraint(WEST, flagsLbl, 5, WEST, wrap);
 		wrap.add(flagsLbl);
 
-		l.putConstraint(SpringLayout.NORTH, options, -2,
-				SpringLayout.NORTH, flagsLbl);
-		l.putConstraint(SpringLayout.WEST, options, 5,
-				SpringLayout.EAST, flagsLbl);
+		l.putConstraint(NORTH, options, -2, NORTH, flagsLbl);
+		l.putConstraint(WEST, options, 5, EAST, flagsLbl);
 		wrap.add(options);
 
-		l.putConstraint(SpringLayout.NORTH, flags, 0,
-				SpringLayout.NORTH, options);
-		l.putConstraint(SpringLayout.WEST, flags, 5,
-				SpringLayout.EAST, options);
-		l.putConstraint(SpringLayout.EAST, flags, 5,
-				SpringLayout.HORIZONTAL_CENTER, wrap);
+		l.putConstraint(NORTH, flags, 0, NORTH, options);
+		l.putConstraint(WEST, flags, 5, EAST, options);
+		l.putConstraint(EAST, flags, 5, HORIZONTAL_CENTER, wrap);
 		wrap.add(flags);
 
 		// apply button
 		final JButton goBtn = new JButton("Apply filter!");
-		l.putConstraint(SpringLayout.NORTH, goBtn, -2,
-				SpringLayout.NORTH, options);
-		l.putConstraint(SpringLayout.WEST, goBtn, 5,
-				SpringLayout.EAST, flags);
-		l.putConstraint(SpringLayout.EAST, goBtn, -5,
-				SpringLayout.EAST, wrap);
+		l.putConstraint(NORTH, goBtn, -2, NORTH, options);
+		l.putConstraint(WEST, goBtn, 5, EAST, flags);
+		l.putConstraint(EAST, goBtn, -5, EAST, wrap);
 		wrap.add(goBtn);
 
 		// filter info
@@ -179,12 +166,9 @@ public class SpriteFilter {
 		flagTextInfo.setEditable(false);
 		flagTextInfo.setHighlighter(null);
 		flagTextInfo.setBackground(null);
-		l.putConstraint(SpringLayout.NORTH, flagTextInfo, 5,
-				SpringLayout.SOUTH, flagsLbl);
-		l.putConstraint(SpringLayout.WEST, flagTextInfo, 5,
-				SpringLayout.WEST, wrap);
-		l.putConstraint(SpringLayout.EAST, flagTextInfo, -5,
-				SpringLayout.EAST, wrap);
+		l.putConstraint(NORTH, flagTextInfo, 5, SOUTH, flagsLbl);
+		l.putConstraint(WEST, flagTextInfo, 5, WEST, wrap);
+		l.putConstraint(EAST, flagTextInfo, -5, EAST, wrap);
 		wrap.add(flagTextInfo);
 
 		// ico
