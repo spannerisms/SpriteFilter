@@ -24,7 +24,7 @@ import javax.swing.SpringLayout;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import SpriteManipulator.*;
+import spritemanipulator.*;
 
 import static javax.swing.SpringLayout.*;
 
