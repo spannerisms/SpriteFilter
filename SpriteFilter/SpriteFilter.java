@@ -29,9 +29,6 @@ import spritemanipulator.*;
 import static javax.swing.SpringLayout.*;
 
 public class SpriteFilter {
-	// version number
-	static final String VERSION = "v1.5";
-
 	// class constants
 	static final int SPRITESIZE = SpriteManipulator.SPRITE_DATA_SIZE; // invariable lengths
 	static final int PALETTESIZE = SpriteManipulator.PAL_DATA_SIZE;
@@ -55,7 +52,7 @@ public class SpriteFilter {
 				// do nothing
 		} //end System
 
-		final JFrame frame = new JFrame("Sprite Filter " + VERSION); // frame name
+		final JFrame frame = new JFrame("Sprite Filter " + SpriteManipulator.ALTTPNG_VERSION); // frame name
 		final Dimension d = new Dimension(600, 382);
 		final Dimension d2 = new Dimension(300, 250);
 
