@@ -30,6 +30,7 @@ import static javax.swing.SpringLayout.*;
 
 public class SpriteFilter {
 	// class constants
+	static final String VERSION = "v1.2.4";
 	static final int SPRITESIZE = SpriteManipulator.SPRITE_DATA_SIZE; // invariable lengths
 	static final int PALETTESIZE = SpriteManipulator.PAL_DATA_SIZE;
 	static final String HEX = "0123456789ABCDEF"; // HEX values
@@ -60,8 +61,10 @@ public class SpriteFilter {
 		final JDialog aboutFrame = new JDialog(frame, "About");
 		final TextArea aboutTextArea = new TextArea("", 0, 0, TextArea.SCROLLBARS_VERTICAL_ONLY);
 		aboutTextArea.setEditable(false);
+		aboutTextArea.append(String.format("Sprite Filter version %s\n", VERSION));
+		aboutTextArea.append(String.format("ALttPNG version %s\n\n", SpriteManipulator.ALTTPNG_VERSION));
 		aboutTextArea.append("Written by fatmanspanda"); // hey, that's me
-		aboutTextArea.append("\n\nSpecial thanks:\nMikeTrethewey"); // force me to do this and falls in every category
+		aboutTextArea.append("\n\nSpecial thanks:\nMikeTrethewey");
 		aboutTextArea.append("\n\nResources and development:\n");
 		aboutTextArea.append(String.join(", ",
 				new String[]{
