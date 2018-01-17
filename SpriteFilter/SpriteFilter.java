@@ -128,7 +128,7 @@ public class SpriteFilter {
 		final JButton fileNameBtn = new JButton("Load sprite");
 
 		l.putConstraint(NORTH, fileName, 5, NORTH, wrap);
-		l.putConstraint(WEST, fileName, 5, WEST, wrap);	
+		l.putConstraint(WEST, fileName, 5, WEST, wrap);
 		l.putConstraint(EAST, fileName, -5, WEST, fileNameBtn);
 		wrap.add(fileName);
 
@@ -136,7 +136,7 @@ public class SpriteFilter {
 		l.putConstraint(EAST, fileNameBtn, -5, EAST, wrap);
 		wrap.add(fileNameBtn);
 
-		// flags 
+		// flags
 		final JLabel flagsLbl = new JLabel("Flag and filter");
 		final JTextField flags = new JTextField();
 		final JComboBox<Filter> options = new JComboBox<Filter>(Filter.values());
